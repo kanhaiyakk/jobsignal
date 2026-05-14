@@ -1,0 +1,4 @@
+rootProject.name = 'jobsignal'
+
+include 'shared'
+include 'scraper-service'
