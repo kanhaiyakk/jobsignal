@@ -4,6 +4,18 @@ plugins {
     id 'io.spring.dependency-management'
 }
 
+configurations.all {
+    resolutionStrategy.force 'org.testcontainers:testcontainers:1.21.4'
+    resolutionStrategy.force 'org.testcontainers:postgresql:1.21.4'
+    resolutionStrategy.force 'org.testcontainers:junit-jupiter:1.21.4'
+    resolutionStrategy.force 'org.testcontainers:jdbc:1.21.4'
+    resolutionStrategy.force 'org.testcontainers:database-commons:1.21.4'
+    resolutionStrategy.force 'com.github.docker-java:docker-java-api:3.4.2'
+    resolutionStrategy.force 'com.github.docker-java:docker-java-transport-zerodep:3.4.2'
+    resolutionStrategy.force 'com.github.docker-java:docker-java-transport:3.4.2'
+    resolutionStrategy.force 'com.github.docker-java:docker-java-core:3.4.2'
+}
+
 dependencies {
     // Internal dependencies
     implementation project(':shared')
@@ -29,13 +41,19 @@ dependencies {
 
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:testcontainers'
-    testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:testcontainers:1.21.4'
+    testImplementation 'org.testcontainers:postgresql:1.21.4'
+    testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
     testImplementation 'io.rest-assured:json-schema-validator:5.5.0'
 }
 
 bootJar {
     archiveFileName = 'scraper-service.jar'
+}
+
+test {
+    environment 'DOCKER_HOST', 'unix:///Users/kanhaiyakumar/.docker/run/docker.sock'
+    environment 'TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE', '/Users/kanhaiyakumar/.docker/run/docker.sock'
 }

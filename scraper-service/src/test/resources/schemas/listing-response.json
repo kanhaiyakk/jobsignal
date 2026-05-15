@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "source", "externalId", "title", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "source": { "type": "string" },
+    "externalId": { "type": "string" },
+    "title": { "type": "string" },
+    "company": { "type": ["string", "null"] },
+    "location": { "type": ["string", "null"] },
+    "applyUrl": { "type": ["string", "null"] },
+    "postedAt": { "type": ["string", "null"], "format": "date-time" },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
