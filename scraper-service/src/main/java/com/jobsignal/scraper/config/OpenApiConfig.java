@@ -17,7 +17,7 @@ public class OpenApiConfig {
                         .description("Ingests job listings from public APIs and stores them for downstream processing")
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("Job Insights Platform")
+                                .name("JobSignal")
                                 .email("kanhaiyakumar@durucooperation.com")));
     }
 }

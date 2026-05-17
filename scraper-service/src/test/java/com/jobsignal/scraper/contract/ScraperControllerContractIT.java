@@ -1,8 +1,10 @@
 package com.jobsignal.scraper.contract;
 
 import com.jobsignal.scraper.client.RemoteOkClient;
+import com.jobsignal.scraper.messaging.producer.RawListingProducer;
 import com.jobsignal.scraper.model.RawListing;
 import com.jobsignal.scraper.persistence.repository.RawListingRepository;
+import com.jobsignal.scraper.service.ScraperRateLimiter;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,13 +24,12 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-class
-ScraperControllerContractIT {
+class ScraperControllerContractIT {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
@@ -46,6 +47,8 @@ ScraperControllerContractIT {
         registry.add("spring.flyway.baseline-on-migrate", () -> "true");
         registry.add("scraper.remoteok.base-url", () -> "https://remoteok.com");
         registry.add("scraper.remoteok.timeout-seconds", () -> "10");
+        registry.add("spring.kafka.bootstrap-servers", () -> "localhost:9092");
+        registry.add("spring.kafka.admin.fail-fast", () -> "false");
     }
 
     @LocalServerPort
@@ -57,10 +60,17 @@ ScraperControllerContractIT {
     @MockBean
     private RemoteOkClient remoteOkClient;
 
+    @MockBean
+    private RawListingProducer rawListingProducer;
+
+    @MockBean
+    private ScraperRateLimiter scraperRateLimiter;
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
         repository.deleteAll();
+        when(scraperRateLimiter.tryAcquire(anyString())).thenReturn(true);
     }
 
     @Test

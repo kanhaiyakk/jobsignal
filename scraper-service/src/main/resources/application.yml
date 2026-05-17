@@ -3,6 +3,17 @@ spring:
     name: scraper-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    admin:
+      fail-fast: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 server:
   port: ${SERVER_PORT:8080}
@@ -23,7 +34,15 @@ springdoc:
     path: /swagger-ui.html
     operations-sorter: method
 
+kafka:
+  topics:
+    raw-listings: raw-listings
+    failed-listings: failed-listings
+
 scraper:
   remoteok:
     base-url: ${REMOTEOK_BASE_URL:https://remoteok.com}
     timeout-seconds: ${REMOTEOK_TIMEOUT_SECONDS:10}
+  rate-limiter:
+    max-requests-per-window: ${SCRAPER_RATE_LIMIT_MAX:10}
+    window-seconds: ${SCRAPER_RATE_LIMIT_WINDOW:60}

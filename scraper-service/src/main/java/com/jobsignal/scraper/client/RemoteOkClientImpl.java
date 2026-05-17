@@ -3,7 +3,6 @@ package com.jobsignal.scraper.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jobsignal.scraper.config.RemoteOkProperties;
 import com.jobsignal.scraper.model.RawListing;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +24,6 @@ public class RemoteOkClientImpl implements RemoteOkClient {
 
     private final WebClient remoteOkWebClient;
     private final ObjectMapper objectMapper;
-    private final RemoteOkProperties properties;
 
     @Override
     public List<RawListing> fetchLatestListings() {
@@ -69,7 +68,7 @@ public class RemoteOkClientImpl implements RemoteOkClient {
         }
     }
 
-    private java.util.Optional<RawListing> parseListing(JsonNode node) {
+    private Optional<RawListing> parseListing(JsonNode node) {
         try {
             String externalId = node.path("id").asText();
             String title = node.path("position").asText("");
@@ -87,13 +86,13 @@ public class RemoteOkClientImpl implements RemoteOkClient {
             Instant postedAt = parseDate(node.path("date").asText(null));
             String rawPayload = objectMapper.writeValueAsString(node);
 
-            return java.util.Optional.of(new RawListing(
+            return Optional.of(new RawListing(
                     externalId, SOURCE, title, company, location,
                     description, applyUrl, postedAt, tags, rawPayload
             ));
         } catch (Exception e) {
             log.warn("Skipping malformed listing node: {}", e.getMessage());
-            return java.util.Optional.empty();
+            return Optional.empty();
         }
     }
 
