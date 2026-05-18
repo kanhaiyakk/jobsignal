@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "weekStart", "weekEnd", "totalListings"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "weekStart": { "type": "string" },
+    "weekEnd": { "type": "string" },
+    "totalListings": { "type": "integer", "minimum": 0 },
+    "topSkills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["skill", "count"],
+        "properties": {
+          "skill": { "type": "string" },
+          "count": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "seniorityCounts": { "type": ["object", "null"] },
+    "remotePolicyCounts": { "type": ["object", "null"] },
+    "topCompanies": { "type": ["array", "null"], "items": { "type": "string" } },
+    "reportText": { "type": ["string", "null"] },
+    "generatedAt": { "type": ["string", "null"] }
+  }
+}

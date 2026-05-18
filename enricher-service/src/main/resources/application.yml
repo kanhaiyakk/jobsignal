@@ -1,0 +1,87 @@
+
+spring:
+  application:
+    name: enricher-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  main:
+    web-application-type: none
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: enricher-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "com.jobsignal.*"
+        spring.json.value.default.type: "com.jobsignal.shared.event.NormalizedListingEvent"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    admin:
+      fail-fast: false
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/jobsignal}
+    username: ${DATASOURCE_USERNAME:jobsignal}
+    password: ${DATASOURCE_PASSWORD:localdev}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: ${SERVER_PORT:8083}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+kafka:
+  topics:
+    normalized-listings: normalized-listings
+    enriched-listings: enriched-listings
+    failed-listings: failed-listings
+
+gemini:
+  api-key: ${GEMINI_API_KEY:changeme}
+  base-url: https://generativelanguage.googleapis.com
+  chat-model: gemini-2.5-flash
+  embedding-model: text-embedding-004
+
+enricher:
+  deduplication-threshold: 0.92
+  embedding-cache-ttl-seconds: 604800
+  extraction-cache-ttl-seconds: 604800
+
+resilience4j:
+  retry:
+    instances:
+      gemini:
+        max-attempts: 3
+        wait-duration: 1s
+        exponential-backoff-multiplier: 2.0
+        retry-exceptions:
+          - com.jobsignal.enricher.exception.GeminiException
+  circuitbreaker:
+    instances:
+      gemini:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3

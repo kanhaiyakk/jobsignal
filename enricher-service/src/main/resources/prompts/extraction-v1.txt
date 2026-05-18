@@ -1,0 +1,14 @@
+You are an expert job listing analyzer. Extract structured information from the job listing below.
+
+Job Title: {title}
+Company: {company}
+Location: {location}
+Description:
+{description}
+
+Return a JSON object with exactly these fields:
+- techStack: array of technology/tool names explicitly mentioned (e.g. ["Java", "Spring Boot", "PostgreSQL", "Docker"])
+- seniority: one of JUNIOR, MID, SENIOR, STAFF, PRINCIPAL, UNKNOWN
+- salaryRange: salary information as a string (e.g. "$120k-$150k/year"), or "not specified" if absent
+- experienceYears: minimum years of experience required as an integer (0 if not mentioned)
+- remotePolicy: one of REMOTE, HYBRID, ON_SITE, UNKNOWN

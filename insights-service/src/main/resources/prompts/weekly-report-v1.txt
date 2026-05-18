@@ -1,0 +1,24 @@
+You are a senior job market analyst. Based on the aggregated job listing data below, write a professional weekly insights report.
+
+Analysis Period: {week_start} to {week_end}
+Total Listings Analyzed: {total_listings}
+
+Top Skills in Demand:
+{skills_summary}
+
+Seniority Distribution:
+{seniority_summary}
+
+Remote Work Policy Distribution:
+{remote_policy_summary}
+
+Top Hiring Companies:
+{companies_summary}
+
+Write a professional 3-4 paragraph report that:
+1. Opens with an executive summary of hiring volume and key market signals
+2. Highlights the most in-demand skills and what they indicate about technology trends
+3. Analyzes the seniority mix and remote work patterns, noting any notable shifts
+4. Closes with 2-3 specific, actionable insights for job seekers this week
+
+Be concise, data-driven, and direct. Avoid filler phrases. Use specific numbers from the data.
